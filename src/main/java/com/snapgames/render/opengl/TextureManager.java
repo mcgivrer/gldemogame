@@ -67,8 +67,6 @@ public class TextureManager {
                 pixels.put((byte) (c.getAlpha())); // ALPHA
             }
         }
-        image.flush();
-        image = null;
         pixels.flip();
         t.id = GL11.glGenTextures();
         glBindTexture(GL11.GL_TEXTURE_2D, t.id);
@@ -77,6 +75,9 @@ public class TextureManager {
         GL11.glTexImage2D(GL11.GL_TEXTURE_2D, 0, GL11.GL_RGBA, t.width, t.height, 0, GL11.GL_RGBA, GL11.GL_UNSIGNED_BYTE,
                 pixels);
         addTexture(t);
+        image.flush();
+        image = null;
+
         return t;
     }
 
