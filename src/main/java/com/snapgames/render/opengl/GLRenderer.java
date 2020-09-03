@@ -3,7 +3,10 @@ package com.snapgames.render.opengl;
 import java.util.ArrayList;
 import java.util.List;
 
+<<<<<<< HEAD
 import com.snapgames.core.GameObject;
+=======
+>>>>>>> add-renderer-class
 import org.lwjgl.glfw.GLFW;
 import org.lwjgl.opengl.GL;
 import org.lwjgl.opengl.GL11;
