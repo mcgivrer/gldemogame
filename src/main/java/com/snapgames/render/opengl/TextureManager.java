@@ -15,7 +15,6 @@ import java.util.Map.Entry;
 
 import javax.imageio.ImageIO;
 
-import org.lwjgl.BufferUtils;
 import org.lwjgl.opengl.GL11;
 
 public class TextureManager {
@@ -54,30 +53,34 @@ public class TextureManager {
     public Texture createTextureFromImage(String name, BufferedImage image) {
         Texture t;
         t = new Texture(name, image.getWidth(), image.getHeight());
-        int[] pixels_raw = new int[t.width * t.height * 4];
-        image.getRGB(0, 0, t.width, t.height, pixels_raw, 0, t.width);
-        ByteBuffer pixels = BufferUtils.createByteBuffer(t.width * t.height * 4);
+
+        // Prepare pixels
+        int[] rawPixels = new int[t.width * t.height];
+        image.getRGB(0, 0, t.width, t.height, rawPixels, 0, t.width);
+        ByteBuffer pixels = ByteBuffer.allocateDirect(image.getWidth() * image.getHeight() * 4);
 
         for (int y = 0; y < t.height; y++) {
             for (int x = 0; x < t.width; x++) {
+
                 Color c = new Color(image.getRGB(x, y));
                 pixels.put((byte) (c.getRed())); // RED
                 pixels.put((byte) (c.getGreen())); // GREEN
                 pixels.put((byte) (c.getBlue())); // BLUE
                 pixels.put((byte) (c.getAlpha())); // ALPHA
+
             }
         }
         pixels.flip();
+
+        // Define GL Texture
         t.id = GL11.glGenTextures();
         glBindTexture(GL11.GL_TEXTURE_2D, t.id);
+        GL11.glTexParameterf(GL11.GL_TEXTURE_2D, GL11.GL_TEXTURE_MAG_FILTER, GL11.GL_LINEAR_MIPMAP_LINEAR);
         GL11.glTexParameterf(GL11.GL_TEXTURE_2D, GL11.GL_TEXTURE_MIN_FILTER, GL11.GL_NEAREST);
-        GL11.glTexParameterf(GL11.GL_TEXTURE_2D, GL11.GL_TEXTURE_MAG_FILTER, GL11.GL_NEAREST);
-        GL11.glTexImage2D(GL11.GL_TEXTURE_2D, 0, GL11.GL_RGBA, t.width, t.height, 0, GL11.GL_RGBA, GL11.GL_UNSIGNED_BYTE,
-                pixels);
+        GL11.glTexImage2D(GL11.GL_TEXTURE_2D, 0, GL11.GL_RGBA, t.width, t.height, 0, GL11.GL_RGBA,
+                GL11.GL_UNSIGNED_BYTE, pixels);
         addTexture(t);
         image.flush();
-        image = null;
-
         return t;
     }
 
