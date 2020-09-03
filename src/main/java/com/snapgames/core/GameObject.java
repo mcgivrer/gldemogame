@@ -1,27 +1,38 @@
 package com.snapgames.core;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import com.snapgames.render.opengl.Texture;
 
 public class GameObject {
-    public int id;
-    public String name;
-    public float x = 0;
-    public float y = 0;
-    public float dx = 0;
-    public float dy = 0;
+
+    public static int index = 0;
+    public int id = (index++);
+
+    public String name = String.format("%s_%d", "gameObject_", id);
+
+    public Vec2d pos = new Vec2d();
+    public Vec2d vel = new Vec2d();
+    public Vec2d acc = new Vec2d();
+
+    public List<Vec2d> forces = new ArrayList<>();
+
+    public double rugosity = 0;
     public int direction = 1;
+
     public Texture texture;
 
-    public GameObject(String name, int x, int y, Texture texture) {
+    public GameObject(String name, Vec2d pos, Texture texture) {
         this.name = name;
-        this.x = x;
-        this.y = y;
+        this.pos = pos;
         this.texture = texture;
     }
 
-    public void update(){
-        x += dx;
-        y += dy;
+    public void update(double elapsed) {
+        Vec2d r = new Vec2d().addAll(forces);
+        vel = vel.add(r.multiply(elapsed));
+        pos.add(vel.multiply(elapsed));
+        vel = vel.multiply(rugosity);
     }
-
 }

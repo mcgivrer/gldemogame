@@ -2,26 +2,29 @@ package com.snapgames.render.opengl;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.ResourceBundle;
 
-<<<<<<< HEAD
+import com.snapgames.core.GameConfig;
 import com.snapgames.core.GameObject;
-=======
->>>>>>> add-renderer-class
+import com.snapgames.sample.Game;
+
 import org.lwjgl.glfw.GLFW;
 import org.lwjgl.opengl.GL;
 import org.lwjgl.opengl.GL11;
-
-import com.snapgames.sample.Game;
 
 public class GLRenderer {
 	long window;
 	private Game game;
 	private List<GameObject> objects = new ArrayList<>();
 
-	public GLRenderer(Game g) {
+	public GLRenderer(Game g, GameConfig config) {
 		game = g;
+
+		int width = config.getInteger("game.screen.width", 640);
+		int height = config.getInteger("game.screen.height", 480);
+		String title = config.getString("game.screen.title", "OpenGl Window");
 		if (GLFW.glfwInit()) {
-			window = GLFW.glfwCreateWindow(640, 480, g.config.getString("game.title"), 0, 0);
+			window = GLFW.glfwCreateWindow(width, height, title, 0, 0);
 			GLFW.glfwShowWindow(window);
 			GLFW.glfwMakeContextCurrent(window);
 			GL.createCapabilities();
@@ -54,26 +57,26 @@ public class GLRenderer {
 	}
 
 	private void drawGameObject(GameObject g) {
-        game.tm.bind(g.texture);
-        GL11.glTranslatef(g.x, g.y, 0);
-        GL11.glScalef(g.direction,1,1);
-        GL11.glBegin(GL11.GL_QUADS);
+		game.tm.bind(g.texture);
+		GL11.glTranslated(g.pos.x, g.pos.y, 0);
+		GL11.glScaled(g.direction, 1, 1);
+		GL11.glBegin(GL11.GL_QUADS);
 
-        GL11.glTexCoord2f(0,0);
-        GL11.glVertex2f(-0.1f, 0.1f);
+		GL11.glTexCoord2d(0, 0);
+		GL11.glVertex2d(-0.1f, 0.1f);
 
-        GL11.glTexCoord2f(1,0);
-        GL11.glVertex2f(0.1f, 0.1f);
+		GL11.glTexCoord2d(1, 0);
+		GL11.glVertex2d(0.1f, 0.1f);
 
-        GL11.glTexCoord2f(1,1);
-        GL11.glVertex2f(0.1f, -0.1f);
+		GL11.glTexCoord2d(1, 1);
+		GL11.glVertex2d(0.1f, -0.1f);
 
-        GL11.glTexCoord2f(0,1);
-        GL11.glVertex2f(-0.1f, -0.1f);
+		GL11.glTexCoord2d(0, 1);
+		GL11.glVertex2d(-0.1f, -0.1f);
 
-        GL11.glEnd();
-        GL11.glTranslatef(-g.x, -g.y,0);
-    }
+		GL11.glEnd();
+		GL11.glTranslated(-g.pos.x, -g.pos.y, 0);
+	}
 
 	public long getWindow() {
 		return window;
