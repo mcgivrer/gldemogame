@@ -7,6 +7,7 @@ import java.util.Map;
 import com.snapgames.core.GOManager;
 import com.snapgames.core.GameConfig;
 import com.snapgames.core.GameObject;
+import com.snapgames.core.GameSystemManager;
 import com.snapgames.core.Vec2d;
 import com.snapgames.render.opengl.GLRenderer;
 import com.snapgames.render.opengl.TextureManager;
@@ -25,6 +26,8 @@ import org.lwjgl.opengl.GL11;
 public class Game {
 
     public GameConfig config;
+
+    GameSystemManager gsm;
     public TextureManager tm;
     public GLRenderer glr;
     public GOManager gom;
@@ -38,17 +41,24 @@ public class Game {
     public boolean exit = false;
 
     public Game() {
-
         config = new GameConfig("res.gldemogame");
-        tm = new TextureManager();
-        glr = new GLRenderer(this, config);
-        gom = new GOManager(this);
         initialize(config);
     }
 
     private void initialize(GameConfig config) {
+
+        gsm = new GameSystemManager(this, config);
+        tm = new TextureManager(this, config);
+        glr = new GLRenderer(this, config);
+        gom = new GOManager(this, config);
+
+        gsm.add(tm);
+        gsm.add(glr);
+        gsm.add(gom);
+
         this.UPS = config.getDoule("game.ups", 60);
         this.timeUps = 1000 / UPS;
+
     }
 
     private void load() {
@@ -141,7 +151,7 @@ public class Game {
 
     private void endLoop() {
 
-        // Nothing special on end loop to be performed.
+        gsm.dispose();
 
     }
 

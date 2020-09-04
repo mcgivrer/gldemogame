@@ -15,10 +15,18 @@ import java.util.Map.Entry;
 
 import javax.imageio.ImageIO;
 
+import com.snapgames.core.GameConfig;
+import com.snapgames.core.GameSystem;
+import com.snapgames.sample.Game;
+
 import org.lwjgl.opengl.GL11;
 
-public class TextureManager {
-    Map<String, Texture> textures = new HashMap<>();
+public class TextureManager extends GameSystem {
+    Map<String, Texture> textures;
+
+    public TextureManager(Game g, GameConfig config) {
+        super(g, config);
+    }
 
     public Texture load(String imagePath) {
         Texture t = null;
@@ -106,6 +114,17 @@ public class TextureManager {
 
     public void bind(Texture t) {
         glBindTexture(GL11.GL_TEXTURE_2D, textures.get(t.name).id);
+    }
+
+    @Override
+    public void initialize(Game g, GameConfig c) {
+        textures = new HashMap<>();
+    }
+
+    @Override
+    public void dispose() {
+        textures.clear();
+
     }
 
 }

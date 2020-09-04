@@ -7,14 +7,12 @@ import java.util.concurrent.ConcurrentHashMap;
 
 import com.snapgames.sample.Game;
 
-public class GOManager {
+public class GOManager extends GameSystem {
 
-    Map<String, GameObject> objects = new ConcurrentHashMap<>();
+    Map<String, GameObject> objects;
 
-    private Game parentGame;
-
-    public GOManager(Game g) {
-        parentGame = g;
+    public GOManager(Game g, GameConfig config) {
+        super(g, config);
     }
 
     public void add(GameObject go) {
@@ -41,5 +39,15 @@ public class GOManager {
             go.update(elapsed);
             go.forces.clear();
         }
+    }
+
+    @Override
+    public void initialize(Game g, GameConfig c) {
+        objects = new ConcurrentHashMap<>();
+    }
+
+    @Override
+    public void dispose() {
+        this.objects.clear();
     }
 }

@@ -2,27 +2,43 @@ package com.snapgames.render.opengl;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.ResourceBundle;
 
 import com.snapgames.core.GameConfig;
 import com.snapgames.core.GameObject;
+import com.snapgames.core.GameSystem;
 import com.snapgames.sample.Game;
 
 import org.lwjgl.glfw.GLFW;
 import org.lwjgl.opengl.GL;
 import org.lwjgl.opengl.GL11;
 
-public class GLRenderer {
+public class GLRenderer extends GameSystem implements IRenderer {
 	long window;
-	private Game game;
-	private List<GameObject> objects = new ArrayList<>();
+
+	public int width;
+	public int height;
+	public String title; 
+
+	private List<GameObject> objects;
+
+	public GLRenderer() {
+	}
 
 	public GLRenderer(Game g, GameConfig config) {
-		game = g;
+		super(g, config);
+	}
 
-		int width = config.getInteger("game.screen.width", 640);
-		int height = config.getInteger("game.screen.height", 480);
-		String title = config.getString("game.screen.title", "OpenGl Window");
+	@Override
+	public void initialize(Game g, GameConfig c) {
+		objects = new ArrayList<>();
+		width = config.getInteger("game.screen.width", 640);
+		height = config.getInteger("game.screen.height", 480);
+		title = config.getString("game.screen.title", "OpenGl Window");
+		createWindow();
+	}
+
+	private void createWindow() {
+
 		if (GLFW.glfwInit()) {
 			window = GLFW.glfwCreateWindow(width, height, title, 0, 0);
 			GLFW.glfwShowWindow(window);
@@ -81,4 +97,15 @@ public class GLRenderer {
 	public long getWindow() {
 		return window;
 	}
+
+	@Override
+	public void dispose() {
+		this.objects.clear();
+	}
+
+	@Override
+	public String getName() {
+		return this.getClass().getName();
+	}
+
 }
